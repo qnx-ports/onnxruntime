@@ -14,5 +14,6 @@
         "-build/include_subdir",
         "-runtime/references"
     ],
-    "C_Cpp.autoAddFileAssociations": false
+    "C_Cpp.autoAddFileAssociations": false,
+    "cmake.sourceDirectory": "/home/dchordia/onnxruntime/onnxruntime/cmake/external/libprotobuf-mutator/src"
 }

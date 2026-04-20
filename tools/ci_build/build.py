@@ -1176,8 +1176,8 @@ def generate_build_tree(
                             msvc_flags = msvc_flags + " " + compile_flag
                     if len(msvc_flags) != 0:
                         nvcc_flags.append(f'-Xcompiler="{msvc_flags}"')
-            elif is_linux() or is_macOS() or args.build_wasm:
-                if is_linux() and not args.build_wasm:
+            elif is_linux() or is_macOS() or args.build_wasm or args.build_qnx:
+                if ( is_linux() or args.build_qnx ) and not args.build_wasm:
                     ldflags = ["-Wl,-Bsymbolic-functions", "-Wl,-z,relro", "-Wl,-z,now", "-Wl,-z,noexecstack"]
                 else:
                     ldflags = []
@@ -1217,7 +1217,7 @@ def generate_build_tree(
                         "-pipe",
                         "-g",
                     ]
-                if is_linux() and platform.machine() == "x86_64" and not args.build_wasm:
+                if ( is_linux() or args.build_qnx ) and platform.machine() == "x86_64" and not args.build_wasm:
                     # The following flags needs GCC 8 and newer
                     cflags += ["-fstack-clash-protection"]
                     if not args.rv64:
@@ -1225,8 +1225,15 @@ def generate_build_tree(
                 cxxflags = cflags.copy()
                 if args.use_cuda:
                     nvcc_flags = cflags.copy()
+        if args.build_qnx:
+            for define in cmake_extra_defines:
+                if define.startswith('EXTRA_CMAKE_C_FLAGS'):
+                    cflags += [define.split('=', 1)[1]]
+                elif define.startswith('CMAKE_EXE_LINKER_FLAGS'):
+                    ldflags = [define.split('=', 1)[1]]
         if cxxflags is None and cflags is not None and len(cflags) != 0:
             cxxflags = cflags.copy()
+        log.debug(f'cflags ${cflags}')
         config_build_dir = get_config_build_dir(build_dir, config)
         os.makedirs(config_build_dir, exist_ok=True)
         temp_cmake_args = cmake_args.copy()
@@ -1301,7 +1308,6 @@ def generate_build_tree(
             vcpkg_keep_env_vars += ["Python3_ROOT_DIR"]
 
             env["VCPKG_KEEP_ENV_VARS"] = ";".join(vcpkg_keep_env_vars)
-
         run_subprocess(
             [*temp_cmake_args, f"-DCMAKE_BUILD_TYPE={config}"],
             cwd=config_build_dir,
@@ -1323,7 +1329,7 @@ def build_targets(args, cmake_path, build_dir, configs, num_parallel_jobs, targe
     for config in configs:
         log.info("Building targets for %s configuration", config)
         build_dir2 = get_config_build_dir(build_dir, config)
-        cmd_args = [cmake_path, "--build", build_dir2, "--config", config]
+        cmd_args = [cmake_path, "--build", build_dir2, "--config", config, "--verbose"]
         if target:
             cmd_args.extend(["--target", target])
 
@@ -2570,7 +2576,7 @@ def main():
         num_parallel_jobs = number_of_parallel_jobs(args)
         build_targets(args, cmake_path, build_dir, configs, num_parallel_jobs, args.target)
 
-    if args.test:
+    if args.test and not args.build_qnx:
         if args.enable_onnx_tests:
             source_onnx_model_dir = "C:\\local\\models" if is_windows() else "/data/models"
             setup_test_data(source_onnx_model_dir, "models", build_dir, configs)

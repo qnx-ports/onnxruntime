@@ -388,6 +388,9 @@ def add_gdk_args(parser: argparse.ArgumentParser) -> None:
     )
     parser.add_argument("--gdk_platform", default="Scarlett", help="GDK target platform (e.g., Scarlett, XboxOne).")
 
+def add_qnx_args(parser: argparse.ArgumentParser) -> None:
+    """Adds arguments for QNX platform builds."""
+    parser.add_argument("--build_qnx", action="store_true", help="Build for QNX.")
 
 def add_windows_specific_args(parser: argparse.ArgumentParser) -> None:
     """Adds arguments specific to Windows builds or Windows cross-compilation."""
@@ -836,6 +839,7 @@ def parse_arguments() -> argparse.Namespace:
     add_cross_compile_args(parser)  # Non-Windows cross-compile args
     add_android_args(parser)
     add_webassembly_args(parser)
+    add_qnx_args(parser)
     add_dependency_args(parser)
     add_extension_args(parser)
     add_size_reduction_args(parser)

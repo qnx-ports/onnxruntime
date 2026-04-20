@@ -1593,6 +1593,8 @@ if (NOT CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
   if(UNIX)
     if (APPLE)
       set(ONNXRUNTIME_CUSTOM_OP_LIB_LINK_FLAG "-Xlinker -dead_strip")
+    elseif (QNX)
+      set(ONNXRUNTIME_CUSTOM_OP_LIB_LINK_FLAG "-Wl,--version-script=${TEST_SRC_DIR}/testdata/custom_op_library/custom_op_library.lds -Wl,--no-undefined -Wl,--gc-sections -Wl,-z,noexecstack")
     elseif(NOT CMAKE_SYSTEM_NAME MATCHES "AIX")
       set(ONNXRUNTIME_CUSTOM_OP_LIB_LINK_FLAG "-Xlinker --version-script=${TEST_SRC_DIR}/testdata/custom_op_library/custom_op_library.lds -Xlinker --no-undefined -Xlinker --gc-sections -z noexecstack")
     endif()
@@ -1717,6 +1719,8 @@ if (NOT CMAKE_SYSTEM_NAME STREQUAL "Emscripten" AND (NOT onnxruntime_MINIMAL_BUI
   if(UNIX)
     if (APPLE)
       set(ONNXRUNTIME_CUSTOM_OP_INVALID_LIB_LINK_FLAG "-Xlinker -dead_strip")
+    elseif (QNX)
+      set(ONNXRUNTIME_CUSTOM_OP_INVALID_LIB_LINK_FLAG "-Wl,--version-script=${TEST_SRC_DIR}/testdata/custom_op_invalid_library/custom_op_library.lds -Wl,--no-undefined -Wl,--gc-sections -Wl,-z,noexecstack")
     elseif (NOT CMAKE_SYSTEM_NAME MATCHES "AIX")
       string(CONCAT ONNXRUNTIME_CUSTOM_OP_INVALID_LIB_LINK_FLAG
              "-Xlinker --version-script=${TEST_SRC_DIR}/testdata/custom_op_invalid_library/custom_op_library.lds "
@@ -1748,6 +1752,8 @@ if (NOT CMAKE_SYSTEM_NAME STREQUAL "Emscripten" AND (NOT onnxruntime_MINIMAL_BUI
   if(UNIX)
     if (APPLE)
       set(ONNXRUNTIME_CUSTOM_OP_GET_CONST_INPUT_TEST_LIB_LINK_FLAG "-Xlinker -dead_strip")
+    elseif (QNX)
+      set(ONNXRUNTIME_CUSTOM_OP_GET_CONST_INPUT_TEST_LIB_LINK_FLAG "-Wl,--version-script=${TEST_SRC_DIR}/testdata/custom_op_get_const_input_test_library/custom_op_lib.lds -Wl,--no-undefined -Wl,--gc-sections -Wl,-z,noexecstack")
     elseif(NOT CMAKE_SYSTEM_NAME MATCHES "AIX")
       string(CONCAT ONNXRUNTIME_CUSTOM_OP_GET_CONST_INPUT_TEST_LIB_LINK_FLAG
              "-Xlinker --version-script=${TEST_SRC_DIR}/testdata/custom_op_get_const_input_test_library/custom_op_lib.lds "
@@ -1780,6 +1786,8 @@ if (NOT CMAKE_SYSTEM_NAME STREQUAL "Emscripten" AND (NOT onnxruntime_MINIMAL_BUI
   if(UNIX)
     if (APPLE)
       set(ONNXRUNTIME_CUSTOM_OP_lOCAL_FUNCTION_TEST_LIB_LINK_FLAG "-Xlinker -dead_strip")
+    elseif (QNX)
+      set(ONNXRUNTIME_CUSTOM_OP_lOCAL_FUNCTION_TEST_LIB_LINK_FLAG "-Wl,--version-script=${TEST_SRC_DIR}/testdata/custom_op_local_function/custom_op_local_function.lds -Wl,--no-undefined -Wl,--gc-sections -Wl,-z,noexecstack")
     elseif(NOT CMAKE_SYSTEM_NAME MATCHES "AIX")
       string(CONCAT ONNXRUNTIME_CUSTOM_OP_lOCAL_FUNCTION_TEST_LIB_LINK_FLAG
              "-Xlinker --version-script=${TEST_SRC_DIR}/testdata/custom_op_local_function/custom_op_local_function.lds "
@@ -1895,6 +1903,8 @@ if (NOT CMAKE_SYSTEM_NAME STREQUAL "Emscripten" AND onnxruntime_USE_OPENVINO AND
   if(UNIX)
     if (APPLE)
       set(ONNXRUNTIME_CUSTOM_OP_OPENVINO_WRAPPER_LIB_LINK_FLAG "-Xlinker -dead_strip")
+    elseif (QNX)
+      set(ONNXRUNTIME_CUSTOM_OP_OPENVINO_WRAPPER_LIB_LINK_FLAG "-Wl,--version-script=${TEST_SRC_DIR}/testdata/custom_op_get_const_input_test_library/custom_op_lib.lds -Wl,--no-undefined -Wl,--gc-sections -Wl,-z,noexecstack")
     else()
       string(CONCAT ONNXRUNTIME_CUSTOM_OP_OPENVINO_WRAPPER_LIB_LINK_FLAG
              "-Xlinker --version-script=${TEST_SRC_DIR}/testdata/custom_op_openvino_wrapper_library/custom_op_lib.lds "
@@ -1937,6 +1947,8 @@ if (NOT onnxruntime_MINIMAL_BUILD AND NOT onnxruntime_EXTENDED_MINIMAL_BUILD
   endif()
   if(APPLE)
     set_property(TARGET test_execution_provider APPEND_STRING PROPERTY LINK_FLAGS "-Xlinker -exported_symbols_list ${REPO_ROOT}/onnxruntime/test/testdata/custom_execution_provider_library/exported_symbols.lst")
+  elseif (QNX)
+    set_property(TARGET test_execution_provider APPEND_STRING PROPERTY LINK_FLAGS "-Wl,--version-script=${REPO_ROOT}/onnxruntime/test/testdata/custom_execution_provider_library/version_script.lds -Wl,--gc-sections -Wl,-rpath=\\$ORIGIN")
   elseif(UNIX)
     if (NOT CMAKE_SYSTEM_NAME MATCHES "AIX")
       set_property(TARGET test_execution_provider APPEND_STRING PROPERTY LINK_FLAGS "-Xlinker --version-script=${REPO_ROOT}/onnxruntime/test/testdata/custom_execution_provider_library/version_script.lds -Xlinker --gc-sections -Xlinker -rpath=\\$ORIGIN")

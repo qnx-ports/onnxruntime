@@ -25,9 +25,9 @@ TEST(DeviceDiscoveryTest, HasCpuDevice) {
   const auto cpu_devices = GetDevicesByType(OrtHardwareDeviceType_CPU);
   ASSERT_GT(cpu_devices.size(), 0);
 
-#if !defined(__wasm__)
+#if !defined(__wasm__) && !defined(__QNX__)
   ASSERT_NE(cpu_devices[0].vendor_id, 0);
-#endif  // !defined(__WASM__)
+#endif  // !defined(__WASM__) && !defined(__QNX__)
 }
 
 }  // namespace onnxruntime::test

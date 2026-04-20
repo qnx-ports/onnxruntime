@@ -9,5 +9,6 @@ onnxruntime_fetchcontent_declare(
     URL ${DEP_URL_eigen}
     URL_HASH SHA1=${DEP_SHA1_eigen}
     EXCLUDE_FROM_ALL
+    FIND_PACKAGE_ARGS
 )
 onnxruntime_fetchcontent_makeavailable(Eigen3)

@@ -26,7 +26,7 @@ limitations under the License.
 #include <stdlib.h>
 #include <string.h>
 #include <sys/mman.h>
-#if !defined(_AIX)
+#if !defined(_AIX) && !defined(__QNX__)
 #include <sys/syscall.h>
 #endif
 #include <unistd.h>
@@ -202,7 +202,7 @@ class PosixThread : public EnvThread {
   static void* ThreadMain(void* param) {
     std::unique_ptr<Param> p(static_cast<Param*>(param));
     ORT_TRY {
-#if !defined(__APPLE__) && !defined(__ANDROID__) && !defined(__wasm__) && !defined(_AIX)
+#if !defined(__APPLE__) && !defined(__ANDROID__) && !defined(__wasm__) && !defined(_AIX) && !defined(__QNX__)
       if (p->affinity.has_value() && !p->affinity->empty()) {
         cpu_set_t cpuset;
         CPU_ZERO(&cpuset);
@@ -286,7 +286,11 @@ class PosixEnv : public Env {
         auto log_proc_idx = core->processor_start;
         for (uint32_t count = 0; count < core->processor_count; count++, ++log_proc_idx) {
           const auto* log_proc = cpuinfo_get_processor(log_proc_idx);
+#if !defined(__QNX__)
           th_aff.push_back(log_proc->linux_id);
+#else
+          th_aff.push_back(count+1);
+#endif
         }
         ret.push_back(std::move(th_aff));
       }

@@ -186,7 +186,7 @@ option(onnxruntime_ENABLE_TRAINING "Enable full training functionality. Includes
 option(onnxruntime_ENABLE_TRAINING_APIS "Enable ort training apis." OFF)
 option(onnxruntime_ENABLE_TRAINING_OPS "Include training operators but no training session support." OFF)
 option(onnxruntime_ENABLE_TRAINING_E2E_TESTS "Enable training end-to-end tests." OFF)
-option(onnxruntime_ENABLE_CPU_FP16_OPS "Build with advanced instruction sets" ON)
+option(onnxruntime_ENABLE_CPU_FP16_OPS "Build with advanced instruction sets" OFF)
 option(onnxruntime_USE_NCCL "Build with NCCL support" OFF)
 
 # WebAssembly options

@@ -234,8 +234,8 @@ inline std::basic_string<PATH_CHAR_TYPE> GetLastComponent(const std::basic_strin
   return input.substr(pos);
 }
 
-#elif defined(_AIX)
-inline OrtFileType DTToFileTypeAIX(struct stat st) {
+#elif defined(_AIX) || defined(__QNX__)
+inline OrtFileType DTToFileType(struct stat st) {
   switch (st.st_mode & _S_IFMT) {
     case S_IFBLK:
       return OrtFileType::TYPE_BLK;
@@ -283,7 +283,7 @@ void LoopDir(const std::string& dir_name, T func) {
       if (stat(filename.c_str(), &stats) != 0) {
         continue;
       }
-      if (!func(dp->d_name, DTToFileTypeAIX(stats))) {
+      if (!func(dp->d_name, DTToFileType(stats))) {
         break;
       }
     }

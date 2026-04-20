@@ -34,6 +34,8 @@ limitations under the License.
 #endif
 #elif defined(__wasm__)
 #include <emscripten/threading.h>
+#elif defined(__QNX__)
+#include <sys/neutrino.h>
 #else
 #include <sched.h>
 #endif
@@ -139,6 +141,8 @@ void ThreadPoolProfiler::MainThreadStat::LogCore() {
   core_ = emscripten_num_logical_cores();
 #elif defined(_AIX)
   core_ = mycpu();
+#elif defined(__QNX__)
+  core_ = SchedGetCpuNum();
 #else
   core_ = sched_getcpu();
 #endif
@@ -223,6 +227,8 @@ void ThreadPoolProfiler::LogRun(int thread_idx) {
       child_thread_stats_[thread_idx].core_ = emscripten_num_logical_cores();
 #elif defined(_AIX)
       child_thread_stats_[thread_idx].core_ = mycpu();
+#elif defined(__QNX__)
+      child_thread_stats_[thread_idx].core_ = SchedGetCpuNum();
 #else
       child_thread_stats_[thread_idx].core_ = sched_getcpu();
 #endif
